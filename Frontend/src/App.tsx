@@ -1,33 +1,130 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useState, ChangeEvent, FormEvent, useEffect} from 'react'
+import MyForm from "./components/MyForm"
+import { StatusType, dataType, formType } from './types/types'
+import { deletedata, getdata, postdata, updatedata } from './ApiCalls/Apicalls';
+import { proof } from './types/types';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+
+const App = () => {
+  const [postSelect,setPostSelect]=useState<boolean>(true);
+  const [EditSelect,setEditSelect]=useState<boolean>(false);
+  
+
+  const [submit,setSubmit]=useState<StatusType>({status:['submit']});
+  
+
+
+
+
+
+
+  const [allData,setAllData]=useState<dataType[]>([])
+  
+  const[formData,setFormData]=useState<formType>({
+    fname:'',
+    lname:'',
+    DOB:'',
+    id1:'',
+    id2:'',
+  })
+  const handleInputChange = (e:ChangeEvent<HTMLInputElement>)=>{
+    setFormData((prev)=>({
+      ...prev,[e.target.name]:e.target.value
+    }))
+    console.log(formData.id1);
+  }
+
+  const handleSubmit = (e:string) =>{
+    const result = postdata(formData);
+    getData();
+    console.log(result);
+  }
+
+  const getData = async() =>{
+    const data =await getdata();
+    setAllData(data);
+  }
+  
+  useEffect(()=>{
+    getData();
+  },[])
+  
+  const deleteData = async(id:string) =>{
+    const data=await deletedata(id);
+    getData();
+    console.log(data);
+  }
+
+  const[editFormData,setEditFormData]=useState<dataType>({
+    _id:'',
+    fname:'',
+    lname:'',
+    DOB:'',
+    id1:'',
+    id2:'',
+    status:''
+  })
+  const updateData =(element:dataType) =>{
+    setEditFormData(element);
+    if(element.status=='pending'){
+      setEditSelect(true);
+      setPostSelect(false);
+      setSubmit({ status: ['approve', 'rejected'] });
+    }
+  }
+
+  const handleEditInputChange = (e: ChangeEvent<HTMLInputElement>) =>{
+    setEditFormData((prev)=>({
+      ...prev,[e.target.name]:e.target.value
+    }))
+  }
+
+  const handleEditSubmit = async(e:string) =>{
+    editFormData.status=e;
+    const result = await updatedata(editFormData._id,editFormData);
+    setEditSelect(false);
+    setPostSelect(true);
+    getData();
+    console.log(result);
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    {
+      postSelect && (
+        <MyForm handleInputChange={handleInputChange} handleSubmit={handleSubmit}  rest={formData} submit={submit} />
+      )
+    }
+
+    {
+      EditSelect && (
+        <MyForm handleInputChange={handleEditInputChange} handleSubmit={handleEditSubmit} rest={editFormData} submit={submit}/>
+      )
+    }
+      <Table sx={{position:'absolute', left:'60%',right:'40%', top:'80%', transform:'translate(-50%,-50%)'}}>
+        <TableHead>
+            <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>NAME</TableCell>
+                <TableCell>STATUS</TableCell>
+            </TableRow>
+        </TableHead>
+        <TableBody>
+            {
+                allData.map((element,index)=>(
+                    <TableRow key={index}>
+                        <TableCell>{element.id1}</TableCell>
+                        <TableCell>{element.fname} {element.lname}</TableCell>
+                        <TableCell>{element.status}</TableCell>
+                        <TableCell onClick={()=>{updateData(element)}}>Update</TableCell>
+                        <TableCell onClick={()=>{deleteData(element._id)}}>Delete</TableCell>
+                    </TableRow>
+                ))
+            }
+        </TableBody>
+      </Table>
+
     </>
   )
 }
