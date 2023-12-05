@@ -1,6 +1,6 @@
 import { error } from 'console';
 import express, {Request,Response} from 'express'
-import { deletedata, getdata, postdata, updatedata } from '../service/kyc_service';
+import { deletedata, getalldata, postdata, updatedata } from '../service/kyc_service';
 
 export const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post('/post',async(req:Request,res:Response)=>{
 
 router.get('/get',async(req:Request,res:Response)=>{
     try{
-        const result=await getdata();
+        const result=await getalldata();
         res.status(200).json(result);
     }
     catch(error){

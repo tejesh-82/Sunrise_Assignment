@@ -13,31 +13,27 @@ const App = () => {
 
   const [submit,setSubmit]=useState<StatusType>({status:['submit']});
   
-
-
-
-
-
-
   const [allData,setAllData]=useState<dataType[]>([])
   
   const[formData,setFormData]=useState<formType>({
     fname:'',
     lname:'',
     DOB:'',
+    proof1:'',
     id1:'',
+    proof2:'',
     id2:'',
   })
   const handleInputChange = (e:ChangeEvent<HTMLInputElement>)=>{
     setFormData((prev)=>({
       ...prev,[e.target.name]:e.target.value
     }))
-    console.log(formData.id1);
   }
 
-  const handleSubmit = (e:string) =>{
-    const result = postdata(formData);
-    getData();
+  const handleSubmit =async (e:string) =>{
+
+    const result =await postdata(formData);
+    await getData();
     console.log(result);
   }
 
@@ -53,7 +49,6 @@ const App = () => {
   const deleteData = async(id:string) =>{
     const data=await deletedata(id);
     getData();
-    console.log(data);
   }
 
   const[editFormData,setEditFormData]=useState<dataType>({
@@ -61,7 +56,9 @@ const App = () => {
     fname:'',
     lname:'',
     DOB:'',
+    proof1:'',
     id1:'',
+    proof2:'',
     id2:'',
     status:''
   })
@@ -88,21 +85,23 @@ const App = () => {
     getData();
     console.log(result);
   }
-
+const proof2=proof.filter((element)=>(
+  element!=formData.proof1
+))
   return (
     <>
     {
       postSelect && (
-        <MyForm handleInputChange={handleInputChange} handleSubmit={handleSubmit}  rest={formData} submit={submit} />
+        <MyForm handleInputChange={handleInputChange} handleSubmit={handleSubmit}  rest={formData} submit={submit} proof={proof} />
       )
     }
 
     {
       EditSelect && (
-        <MyForm handleInputChange={handleEditInputChange} handleSubmit={handleEditSubmit} rest={editFormData} submit={submit}/>
+        <MyForm handleInputChange={handleEditInputChange} handleSubmit={handleEditSubmit} rest={editFormData} submit={submit} proof={proof2}/>
       )
     }
-      <Table sx={{position:'absolute', left:'60%',right:'40%', top:'80%', transform:'translate(-50%,-50%)'}}>
+      <Table sx={{position:'absolute', left:'60%',right:'40%', top:'90%', transform:'translate(-50%,-50%)'}}>
         <TableHead>
             <TableRow>
                 <TableCell>ID</TableCell>

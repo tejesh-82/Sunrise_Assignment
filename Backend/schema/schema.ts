@@ -13,7 +13,9 @@ const KYC=new Schema<dataType>({
     DOB:{
         type:String,required:true
     },
+    proof1:{type:String,required:true},
     id1:{type:String,required:true},
+    proof2:{type:String,required:true},
     id2:{type:String,required:true},
     status:{type:String,default:'pending'}
 })
