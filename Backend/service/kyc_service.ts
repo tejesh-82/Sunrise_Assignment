@@ -9,15 +9,6 @@ export const postdata = async(data:dataType) =>{
     const month=Number(data.DOB.charAt(5)+data.DOB.charAt(6));
     const year=Number(data.DOB.charAt(0)+data.DOB.charAt(1)+data.DOB.charAt(2)+data.DOB.charAt(3));
     const date=new Date();
-    // console.log(date);
-    // console.log(year<date.getFullYear())
-    // console.log(year,date.getFullYear())
-
-    // console.log(year==date.getFullYear() && month<date.getMonth()+1)
-    // console.log(year, month,date.getMonth()+1)
-
-    // console.log(year==date.getFullYear() && month==date.getMonth() && day<date.getDate())
-    // console.log(year,date.getFullYear(),month,date.getMonth(),day,date.getDate())
     console.log(data.DOB);
     if(year<date.getFullYear()){
         const id1=data.id1;
